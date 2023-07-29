@@ -1,0 +1,69 @@
+SQL Assignment: 
+
+Que 1. Give me list of Customers whose First Name starts with N Or they Live in city xyz.  (Return me Customer Id, First name, Last Name, City)
+Note : used "Prague" as value of xyz.
+Query: 
+	SELECT CustomerID,
+       		FirstName,
+       		LastName,
+       		City
+  	 FROM customers
+ 	WHERE FirstName LIKE "N%" OR 
+       		City = "Prague";
+
+Que 2. Give me list of Tracks where unit prize range between x and y and whose composer name does not contain 'T' (Return me Track Id, Name, Composer, Unit Price) 
+Note:  used x=0 and y=1
+Query: 
+	SELECT trackID,
+       		Name,
+       		Composer,
+       		UnitPrice
+  	 FROM tracks
+ 	WHERE (UnitPrice BETWEEN 0 AND 1) AND 
+       	      (COMPOSER NOT LIKE "%T%");
+
+Que 3. Calculate the sum of total Invoice bill and average of total Invoice bill for each day of month (June 2020). (Return me Invoice Date, Sum of Total bill for that day, Average of Total Bill for that day)
+Query:
+	SELECT InvoiceDate,
+       	       sum(Total) AS SUM,
+       	       avg(Total) AS Average
+  	 FROM Invoices
+ 	WHERE InvoiceDate BETWEEN "2020-06-01 00:00:00" AND "2020-06-30 11:59:59"
+ 	GROUP BY InvoiceDate;
+
+Que 4.  Total Quantity of Each Track ID purchased so far. Sort the Track IDs in Descending order of it’s total Count (Return me Track ID and its total Quantity) 
+Query:
+	SELECT TrackId,
+       	       count(Quantity) AS TotalQuantity
+  	 FROM invoice_items
+ 	GROUP BY TrackId
+ 	ORDER BY (count(Quantity) ) DESC;
+
+
+Que 5. Give me list of Artist IDs,  whose none of the tracks are present in any Playlist. (Return Artist IDs and their names)
+Query: 
+	SELECT ArtistId,
+       		Name
+  	 FROM artists AS at
+       		LEFT JOIN
+       		albums AS ab ON at.artistID = ab.artistID
+       		LEFT JOIN
+       		tracks AS tc ON ab.albumid = tc.albumid
+ 	WHERE tc.trackid NOT IN (
+           SELECT trackid
+             FROM playlist_track
+       );
+
+Que 6. Give me a list of Album ID whose Tracks are present in more than 10 playlist(Return me Album ID, it's Title and the count of playlists wherein it's tracks are present) {Use Join Statement} 
+Query:
+	SELECT ab.AlbumId,
+       		ab.Title,
+       		count(pt.playlistID) AS PlaylistCount
+  	 FROM albums ab
+       		LEFT JOIN
+       		tracks ts ON ab.albumID = ts.albumid
+       		LEFT JOIN
+       		playlist_track pt ON ts.trackid = pt.trackid
+ 	GROUP BY (pt.trackid) 
+	HAVING count(pt.playlistID) > 10;
+
